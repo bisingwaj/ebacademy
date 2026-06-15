@@ -79,6 +79,11 @@ function derange(ids: string[], correct: string[], seed: string): string[] {
       ;[a[i], a[j]] = [a[j], a[i]]
     }
   }
+  // Garantie : si un point fixe subsiste (cas pathologique de très petite taille),
+  // on renvoie un décalage cyclique du corrigé — dérangement sans point fixe.
+  if (a.length > 1 && a.some((v, i) => v === correct[i])) {
+    return correct.map((_, i) => correct[(i + 1) % correct.length])
+  }
   return a
 }
 
