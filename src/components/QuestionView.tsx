@@ -4,6 +4,7 @@ import type { AnswerValue, Question } from '../types'
 import { countWords } from '../lib/scoring'
 import { isDarkMockup, MockupScreen, PhoneFrame } from './Mockups'
 import { Icon } from './Icon'
+import { Figure } from './Figure'
 
 interface Props {
   question: Question
@@ -91,6 +92,12 @@ export default function QuestionView({ question: q, answer, onChange, seed }: Pr
   return (
     <div className="grid items-start gap-6 md:grid-cols-[1fr_auto] md:gap-8">
       <div className="min-w-0">
+        {q.context && (
+          <div className="mb-4 border-l-2 border-eb-blue bg-eb-blue/[0.05] p-3">
+            <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-eb-blue">Mise en situation</div>
+            <p className="text-[14px] leading-relaxed text-eb-ink">{q.context}</p>
+          </div>
+        )}
         <div className="mb-2 flex items-center gap-2">
           <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-eb-muted">
             {CONSIGNE_LABEL[q.type] || 'Question'}
@@ -98,6 +105,11 @@ export default function QuestionView({ question: q, answer, onChange, seed }: Pr
         </div>
         <h2 className="text-pretty text-[19px] font-semibold leading-snug text-navy md:text-[21px]">{q.prompt}</h2>
         <p className="mt-2 text-[14px] text-eb-muted">{q.help || CONSIGNE[q.type]}</p>
+        {q.figure && (
+          <div className="mt-4">
+            <Figure id={q.figure} />
+          </div>
+        )}
         <div className="mt-5">
           <Renderer q={q} answer={answer} onChange={onChange} seed={seed} />
         </div>

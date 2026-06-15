@@ -224,6 +224,86 @@ function UrgBilan() {
   )
 }
 
+function UrgHome() {
+  const tabs = [
+    { ic: 'navigation', l: 'Accueil' },
+    { ic: 'map', l: 'Carte' },
+    { ic: 'list', l: 'Historique' },
+    { ic: 'user', l: 'Profil' },
+  ]
+  return (
+    <div className="absolute inset-0 text-white" style={{ fontSize: 'clamp(8px,2.4vw,11px)' }}>
+      <div style={box(6, 4, 88, 6)} className="flex items-center justify-between">
+        <span className="font-semibold uppercase tracking-[0.12em]">Secouriste</span>
+        <span className="font-mono text-eb-red">199</span>
+      </div>
+
+      {/* Carte de disponibilité avec interrupteur */}
+      <div style={box(5, 14, 90, 18)} className="flex items-center justify-between rounded-[10px] bg-white/8 px-3">
+        <div className="leading-tight">
+          <div className="text-[0.8em] uppercase tracking-wider text-white/55">Disponibilité</div>
+          <div className="text-[1.1em] font-semibold text-eb-ok">En service</div>
+        </div>
+        <div className="relative h-5 w-10 rounded-full bg-eb-ok">
+          <span className="absolute right-0.5 top-0.5 h-4 w-4 rounded-full bg-white" />
+        </div>
+      </div>
+
+      <div style={box(5, 36, 90, 16)} className="grid place-items-center rounded-[10px] border border-white/10 text-center text-white/55">
+        Aucune mission active
+      </div>
+
+      {/* onglets */}
+      {tabs.map((t, i) => (
+        <div key={t.l} style={box(2 + i * 24.5, 88, 23, 10)} className="flex flex-col items-center justify-center gap-0.5 text-white/70">
+          <Icon name={t.ic} size={14} />
+          <span className="text-[0.78em]">{t.l}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function HopitalPreadmission() {
+  return (
+    <div className="absolute inset-0 text-white" style={{ fontSize: 'clamp(8px,2.4vw,11px)' }}>
+      <div style={box(5, 4, 90, 6)} className="flex items-center gap-1.5 font-semibold">
+        <Icon name="hospital" size={14} className="text-eb-red" /> Préadmissions
+      </div>
+
+      <div style={box(5, 12, 90, 40)} className="rounded-[10px] bg-white/8 p-2">
+        <div className="rounded-[6px] bg-eb-red/85 px-2 py-1 text-[0.85em] font-semibold">Préadmission entrante</div>
+        <div className="mt-2 space-y-1 px-1 text-[0.95em] text-white/85">
+          <div className="flex justify-between">
+            <span className="text-white/55">Gravité</span>
+            <span className="font-medium text-eb-red">Vitale</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-white/55">Type</span>
+            <span>Traumatique</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-white/55">Arrivée estimée</span>
+            <span className="font-mono">6 min</span>
+          </div>
+        </div>
+      </div>
+      {/* boutons décision (coordonnées écran pour aligner les zones cliquables) */}
+      <div style={box(8, 41, 40, 8)} className="grid place-items-center rounded-[6px] border border-white/25 text-white/80">
+        Refuser
+      </div>
+      <div style={box(52, 41, 42, 8)} className="grid place-items-center rounded-[6px] bg-eb-ok font-semibold text-white">
+        Accepter
+      </div>
+
+      <div style={box(5, 66, 90, 12)} className="flex items-center justify-between rounded-[10px] bg-white/6 px-3">
+        <span className="text-white/55">Lits disponibles</span>
+        <span className="font-mono">Urgences 4 · Réa 1</span>
+      </div>
+    </div>
+  )
+}
+
 export function MockupScreen({ id }: { id: MockupId }) {
   switch (id) {
     case 'citizen-home':
@@ -234,13 +314,17 @@ export function MockupScreen({ id }: { id: MockupId }) {
       return <UrgMission />
     case 'urgentiste-bilan':
       return <UrgBilan />
+    case 'urgentiste-home':
+      return <UrgHome />
+    case 'hopital-preadmission':
+      return <HopitalPreadmission />
     default:
       return null
   }
 }
 
 export function isDarkMockup(id: MockupId): boolean {
-  return id === 'urgentiste-mission' || id === 'urgentiste-bilan'
+  return id !== 'citizen-home' && id !== 'citizen-type'
 }
 
 export function MockupView({ id }: { id: MockupId }) {

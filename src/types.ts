@@ -17,6 +17,11 @@ export type MockupId =
   | 'citizen-type'
   | 'urgentiste-mission'
   | 'urgentiste-bilan'
+  | 'urgentiste-home'
+  | 'hopital-preadmission'
+
+// Figures de raisonnement (Section cognitive)
+export type FigureId = 'count-triangles' | 'arrows-rotation' | 'dots-series'
 
 export interface Option {
   id: string
@@ -51,6 +56,8 @@ export interface Question {
   help?: string
   points: number
   mockup?: MockupId
+  figure?: FigureId // figure de raisonnement (questions cognitives visuelles)
+  context?: string // mise en situation partagée (études de cas)
   explanation?: string
 
   // selon le type
