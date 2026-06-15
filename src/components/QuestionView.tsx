@@ -9,6 +9,7 @@ interface Props {
   question: Question
   answer: AnswerValue
   onChange: (v: AnswerValue) => void
+  seed: string // graine de mélange propre à la tentative (positions imprévisibles)
 }
 
 const LETTERS = 'ABCDEFGH'.split('')
@@ -37,14 +38,25 @@ const CONSIGNE: Record<string, string> = {
   hotspot: 'Touchez la bonne zone sur l’écran.',
 }
 
-// Mélange déterministe (seedé par l'id) — stable entre rendus.
+// Mélange déterministe et bien distribué (seedé) — stable entre rendus.
+// PRNG : xmur3 (hash de graine) → mulberry32, puis Fisher-Yates avec les bits
+// de poids fort (évite le biais de position des générateurs naïfs).
 function seededShuffle<T>(arr: T[], seed: string): T[] {
-  let h = 0
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0
+  let h = 1779033703 ^ seed.length
+  for (let i = 0; i < seed.length; i++) {
+    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353)
+    h = (h << 13) | (h >>> 19)
+  }
+  let s = (h ^= h >>> 16) >>> 0
+  const rand = () => {
+    s = (s + 0x6d2b79f5) | 0
+    let t = Math.imul(s ^ (s >>> 15), 1 | s)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
-    h = (h * 1103515245 + 12345) >>> 0
-    const j = h % (i + 1)
+    const j = Math.floor(rand() * (i + 1))
     ;[a[i], a[j]] = [a[j], a[i]]
   }
   return a
@@ -70,7 +82,7 @@ function derange(ids: string[], correct: string[], seed: string): string[] {
   return a
 }
 
-export default function QuestionView({ question: q, answer, onChange }: Props) {
+export default function QuestionView({ question: q, answer, onChange, seed }: Props) {
   return (
     <div className="grid items-start gap-6 md:grid-cols-[1fr_auto] md:gap-8">
       <div className="min-w-0">
@@ -82,7 +94,7 @@ export default function QuestionView({ question: q, answer, onChange }: Props) {
         <h2 className="text-pretty text-[19px] font-semibold leading-snug text-navy md:text-[21px]">{q.prompt}</h2>
         <p className="mt-2 text-[14px] text-eb-muted">{q.help || CONSIGNE[q.type]}</p>
         <div className="mt-5">
-          <Renderer q={q} answer={answer} onChange={onChange} />
+          <Renderer q={q} answer={answer} onChange={onChange} seed={seed} />
         </div>
       </div>
 
@@ -104,22 +116,32 @@ export default function QuestionView({ question: q, answer, onChange }: Props) {
   )
 }
 
-function Renderer({ q, answer, onChange }: { q: Question; answer: AnswerValue; onChange: (v: AnswerValue) => void }) {
+function Renderer({
+  q,
+  answer,
+  onChange,
+  seed,
+}: {
+  q: Question
+  answer: AnswerValue
+  onChange: (v: AnswerValue) => void
+  seed: string
+}) {
   switch (q.type) {
     case 'mcq':
-      return <Mcq q={q} answer={answer as string} onChange={onChange} />
+      return <Mcq q={q} answer={answer as string} onChange={onChange} seed={seed} />
     case 'truefalse':
       return <TrueFalse answer={answer as boolean | undefined} onChange={onChange} />
     case 'multi':
-      return <Multi q={q} answer={(answer as string[]) || []} onChange={onChange} />
+      return <Multi q={q} answer={(answer as string[]) || []} onChange={onChange} seed={seed} />
     case 'short':
       return <ShortText answer={(answer as string) || ''} onChange={onChange} />
     case 'long':
       return <LongText q={q} answer={(answer as string) || ''} onChange={onChange} />
     case 'order':
-      return <Ordering q={q} answer={answer as string[] | undefined} onChange={onChange} />
+      return <Ordering q={q} answer={answer as string[] | undefined} onChange={onChange} seed={seed} />
     case 'match':
-      return <Matching q={q} answer={(answer as Record<string, string>) || {}} onChange={onChange} />
+      return <Matching q={q} answer={(answer as Record<string, string>) || {}} onChange={onChange} seed={seed} />
     case 'hotspot':
       return <p className="text-[13px] text-eb-muted">Touchez la bonne zone sur l'écran ci-contre.</p>
     default:
@@ -161,10 +183,11 @@ function OptionRow({
   )
 }
 
-function Mcq({ q, answer, onChange }: { q: Question; answer: string; onChange: (v: AnswerValue) => void }) {
+function Mcq({ q, answer, onChange, seed }: { q: Question; answer: string; onChange: (v: AnswerValue) => void; seed: string }) {
+  const options = useMemo(() => seededShuffle(q.options || [], q.id + seed), [q.options, q.id, seed])
   return (
     <div className="grid gap-2.5">
-      {(q.options || []).map((o, i) => (
+      {options.map((o, i) => (
         <OptionRow key={o.id} letter={LETTERS[i]} selected={answer === o.id} onClick={() => onChange(o.id)}>
           {o.label}
         </OptionRow>
@@ -173,7 +196,8 @@ function Mcq({ q, answer, onChange }: { q: Question; answer: string; onChange: (
   )
 }
 
-function Multi({ q, answer, onChange }: { q: Question; answer: string[]; onChange: (v: AnswerValue) => void }) {
+function Multi({ q, answer, onChange, seed }: { q: Question; answer: string[]; onChange: (v: AnswerValue) => void; seed: string }) {
+  const options = useMemo(() => seededShuffle(q.options || [], q.id + seed), [q.options, q.id, seed])
   const toggle = (id: string) => {
     const set = new Set(answer)
     set.has(id) ? set.delete(id) : set.add(id)
@@ -181,7 +205,7 @@ function Multi({ q, answer, onChange }: { q: Question; answer: string[]; onChang
   }
   return (
     <div className="grid gap-2.5">
-      {(q.options || []).map((o, i) => (
+      {options.map((o, i) => (
         <OptionRow key={o.id} type="check" letter={LETTERS[i]} selected={answer.includes(o.id)} onClick={() => toggle(o.id)}>
           {o.label}
         </OptionRow>
@@ -245,13 +269,23 @@ function LongText({ q, answer, onChange }: { q: Question; answer: string; onChan
   )
 }
 
-function Ordering({ q, answer, onChange }: { q: Question; answer: string[] | undefined; onChange: (v: AnswerValue) => void }) {
+function Ordering({
+  q,
+  answer,
+  onChange,
+  seed,
+}: {
+  q: Question
+  answer: string[] | undefined
+  onChange: (v: AnswerValue) => void
+  seed: string
+}) {
   const items = q.items || []
   const byId = useMemo(() => new Map(items.map((it) => [it.id, it.label])), [items])
 
   const initial = useMemo(
-    () => derange(items.map((i) => i.id), q.correctOrder || [], q.id),
-    [items, q.id, q.correctOrder],
+    () => derange(items.map((i) => i.id), q.correctOrder || [], q.id + seed),
+    [items, q.id, q.correctOrder, seed],
   )
 
   // Enregistre l'ordre initial une seule fois (la question compte comme traitée).
@@ -309,8 +343,19 @@ function Ordering({ q, answer, onChange }: { q: Question; answer: string[] | und
   )
 }
 
-function Matching({ q, answer, onChange }: { q: Question; answer: Record<string, string>; onChange: (v: AnswerValue) => void }) {
+function Matching({
+  q,
+  answer,
+  onChange,
+  seed,
+}: {
+  q: Question
+  answer: Record<string, string>
+  onChange: (v: AnswerValue) => void
+  seed: string
+}) {
   const set = (leftId: string, rightId: string) => onChange({ ...answer, [leftId]: rightId })
+  const rights = useMemo(() => seededShuffle(q.rights || [], q.id + seed + 'r'), [q.rights, q.id, seed])
   return (
     <div className="grid gap-3">
       {(q.lefts || []).map((l) => (
@@ -325,7 +370,7 @@ function Matching({ q, answer, onChange }: { q: Question; answer: Record<string,
               }`}
             >
               <option value="">— Choisir —</option>
-              {(q.rights || []).map((r) => (
+              {rights.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.label}
                 </option>

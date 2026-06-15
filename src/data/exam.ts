@@ -16,7 +16,7 @@ export const EXAM: ExamDefinition = {
     title: 'Examen de certification des formateurs',
     subtitle: 'Écosystème numérique Étoile Bleue — Application Citoyenne & Application Urgentiste',
     edition: 'Édition 1.0 — Juin 2026',
-    durationMin: 40,
+    durationMin: 45,
     passMark: 75,
     practicalNote:
       "Seuil de réussite : 75 % sur la partie écrite (les réponses rédigées sont soumises à validation finale du correcteur).",
@@ -271,6 +271,22 @@ export const EXAM: ExamDefinition = {
       explanation: "Le SOS envoie automatiquement la position GPS de l'appelant.",
     },
     {
+      id: 'q37',
+      sectionId: 's2',
+      type: 'mcq',
+      points: 2,
+      prompt: "À quoi sert précisément l'appel vidéo de l'application Citoyenne ?",
+      options: [
+        { id: 'a', label: "Permettre à l'opérateur de visualiser la scène pour mieux qualifier l'urgence" },
+        { id: 'b', label: 'Permettre au citoyen de voir le secouriste pendant son trajet' },
+        { id: 'c', label: 'Diffuser la position du secouriste au citoyen' },
+        { id: 'd', label: "Enregistrer une preuve vidéo destinée à l'assurance" },
+      ],
+      correctOption: 'a',
+      explanation:
+        "L'appel vidéo donne à l'opérateur une vue de la scène pour affiner la qualification ; il ne sert ni au suivi du secouriste ni à une preuve.",
+    },
+    {
       id: 'q17',
       sectionId: 's2',
       type: 'long',
@@ -394,6 +410,42 @@ export const EXAM: ExamDefinition = {
       ],
       correctOption: 'a',
       explanation: "L'application fournit une navigation GPS guidée jusqu'au lieu d'intervention.",
+    },
+    {
+      id: 'q38',
+      sectionId: 's3',
+      type: 'multi',
+      points: 4,
+      prompt: "Parmi ces actions, lesquelles font réellement partie de l'application Secouriste ?",
+      help: "Attention aux intrus : certaines relèvent d'un autre acteur.",
+      options: [
+        { id: 'a', label: 'Accepter ou refuser une mission de façon motivée' },
+        { id: 'b', label: "Saisir la fiche d'évaluation préhospitalière" },
+        { id: 'c', label: "Transmettre la préadmission à l'hôpital sélectionné" },
+        { id: 'd', label: 'Mettre à jour les capacités disponibles par service hospitalier' },
+        { id: 'e', label: "Qualifier l'appel selon le référentiel de gravité" },
+        { id: 'f', label: "Suivre la navigation GPS guidée jusqu'au lieu d'intervention" },
+      ],
+      correctOptions: ['a', 'b', 'c', 'f'],
+      explanation:
+        "Intrus : mettre à jour les capacités relève de l'app Hôpital ; qualifier l'appel relève de l'opérateur 199.",
+    },
+    {
+      id: 'q39',
+      sectionId: 's3',
+      type: 'mcq',
+      points: 2,
+      prompt:
+        "Quel statut le secouriste sélectionne-t-il quand le patient a été évalué et stabilisé, mais n'a pas encore quitté les lieux ?",
+      options: [
+        { id: 'a', label: 'Pris en charge' },
+        { id: 'b', label: 'Arrivé' },
+        { id: 'c', label: 'Transport' },
+        { id: 'd', label: 'En route' },
+      ],
+      correctOption: 'a',
+      explanation:
+        "« Arrivé » = sur les lieux ; « Pris en charge » = patient évalué et stabilisé ; « Transport » = en route vers l'hôpital.",
     },
     {
       id: 'q25',
@@ -547,6 +599,55 @@ export const EXAM: ExamDefinition = {
       ],
       correctOption: 'a',
       explanation: "L'app Hôpital visualise en temps réel la position du secouriste entrant.",
+    },
+    {
+      id: 'q40',
+      sectionId: 's4',
+      type: 'mcq',
+      points: 3,
+      prompt: "Le secouriste sélectionne un hôpital et envoie la préadmission. Que se passe-t-il ensuite ?",
+      options: [
+        { id: 'a', label: 'Le référent hospitalier accepte ou refuse la préadmission selon les capacités du service' },
+        { id: 'b', label: "L'hôpital est automatiquement réservé et doit accueillir le patient" },
+        { id: 'c', label: "Le patient est considéré comme admis, l'hôpital étant simplement prévenu" },
+        { id: 'd', label: "L'opérateur 199 valide l'admission à la place de l'hôpital" },
+      ],
+      correctOption: 'a',
+      explanation:
+        "Sélectionner un hôpital n'est pas une admission : le référent hospitalier accepte ou refuse selon ses capacités.",
+    },
+    {
+      id: 'q41',
+      sectionId: 's4',
+      type: 'mcq',
+      points: 3,
+      prompt: "Qui réalise la « qualification » de la gravité à l'alerte, et qui réalise le « bilan » préhospitalier ?",
+      options: [
+        { id: 'a', label: "L'opérateur 199 qualifie à la régulation ; le secouriste réalise le bilan sur place" },
+        { id: 'b', label: 'Le secouriste réalise la qualification et le bilan' },
+        { id: 'c', label: "Le citoyen qualifie via l'application ; le secouriste confirme" },
+        { id: 'd', label: "Le référent hospitalier qualifie ; l'opérateur réalise le bilan" },
+      ],
+      correctOption: 'a',
+      explanation:
+        "La qualification (triage) se fait à la régulation par l'opérateur ; le bilan préhospitalier est saisi par le secouriste sur le terrain.",
+    },
+    {
+      id: 'q42',
+      sectionId: 's4',
+      type: 'mcq',
+      points: 2,
+      prompt:
+        "Deux objectifs de délai coexistent. Lequel correspond à l'acceptation de la préadmission par l'hôpital ?",
+      options: [
+        { id: 'a', label: 'Moins de 4 minutes après réception' },
+        { id: 'b', label: '8 minutes' },
+        { id: 'c', label: '15 minutes' },
+        { id: 'd', label: 'Aucune limite définie' },
+      ],
+      correctOption: 'a',
+      explanation:
+        "8 minutes = délai cible global d'une urgence vitale immédiate ; moins de 4 minutes = acceptation de la préadmission par le référent hospitalier.",
     },
     {
       id: 'q35',

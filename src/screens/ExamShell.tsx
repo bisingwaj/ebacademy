@@ -34,7 +34,7 @@ export default function ExamShell({
     try {
       const raw = localStorage.getItem(storeKey(candidate.email))
       if (raw) {
-        const data = JSON.parse(raw) as { answers: AnswerMap; startedAt: number }
+        const data = JSON.parse(raw) as { answers: AnswerMap; startedAt: number; salt?: string }
         if (data?.startedAt && Date.now() - data.startedAt < totalMs) return data
       }
     } catch {
@@ -47,6 +47,8 @@ export default function ExamShell({
   const [index, setIndex] = useState(0)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const startedAt = useRef<number>(restored?.startedAt || Date.now())
+  // Graine de mélange des options, propre à cette tentative (et stable au refresh).
+  const seedRef = useRef<string>(restored?.salt || Math.random().toString(36).slice(2, 10))
   const submittedRef = useRef(false)
   const reduceMotion = useReducedMotion()
 
@@ -74,7 +76,10 @@ export default function ExamShell({
   // Autosauvegarde locale (réponses + heure de départ)
   useEffect(() => {
     try {
-      localStorage.setItem(storeKey(candidate.email), JSON.stringify({ answers, startedAt: startedAt.current }))
+      localStorage.setItem(
+        storeKey(candidate.email),
+        JSON.stringify({ answers, startedAt: startedAt.current, salt: seedRef.current }),
+      )
     } catch {
       /* noop */
     }
@@ -209,7 +214,7 @@ export default function ExamShell({
                 exit={{ opacity: 0, x: -18 }}
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               >
-                <QuestionView question={q} answer={answers[q.id]} onChange={(v) => setAnswer(q.id, v)} />
+                <QuestionView question={q} answer={answers[q.id]} onChange={(v) => setAnswer(q.id, v)} seed={seedRef.current} />
               </motion.div>
             </AnimatePresence>
           </div>
