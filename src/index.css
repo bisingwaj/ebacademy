@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: #161616;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: rgba(13, 27, 62, 0.14);
+  }
+  input,
+  textarea,
+  button,
+  select {
+    font-family: inherit;
+  }
+}
+
+@layer components {
+  /* Label / overline façon Carbon */
+  .eb-eyebrow {
+    @apply text-[12px] font-semibold uppercase tracking-[0.14em] text-eb-red-strong;
+  }
+
+  /* Carte = surface bordée, angle net, ombre minimale */
+  .eb-card {
+    @apply border border-eb-line bg-white;
+  }
+
+  /* Champ texte Carbon : fond gris clair + filet bas, focus 2px marine */
+  .eb-field {
+    @apply block h-12 w-full border-0 border-b border-eb-line-strong bg-gray-10 px-4 text-[15px] text-eb-ink outline-none
+           transition-colors placeholder:text-gray-60 hover:bg-[#e8e8e8] focus:bg-white focus:shadow-focusring;
+  }
+
+  /* Boutons Carbon : rectangulaires, 48px, libellé en poids régulier */
+  .eb-btn {
+    @apply inline-flex h-12 select-none items-center justify-center gap-2.5 px-5 text-[15px] font-medium
+           outline-none transition-colors focus-visible:shadow-focusring disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .eb-btn-primary {
+    @apply eb-btn bg-eb-blue text-white hover:bg-eb-blue-strong;
+  }
+  .eb-btn-red {
+    @apply eb-btn bg-eb-red-strong text-white hover:bg-[#a8262f];
+  }
+  .eb-btn-ghost {
+    @apply eb-btn border border-eb-line-strong bg-white text-navy hover:bg-gray-10;
+  }
+
+  /* Tag Carbon */
+  .eb-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-gray-20 px-3 py-1 text-[12px] font-medium text-gray-80;
+  }
+
+  .eb-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .eb-scroll::-webkit-scrollbar-thumb {
+    background: #c6c6c6;
+    border: 3px solid #ffffff;
+  }
+}
+
+/* ====== Accessibilité : mouvement réduit ====== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ====== Impression : rapport PDF propre ====== */
+@media print {
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  @page {
+    margin: 14mm;
+  }
+  body {
+    background: #fff !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-block {
+    box-shadow: none !important;
+    border-color: #c6c6c6 !important;
+    break-inside: avoid;
+  }
+  .print-page-break {
+    break-before: page;
+  }
+}
