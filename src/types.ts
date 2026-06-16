@@ -19,9 +19,20 @@ export type MockupId =
   | 'urgentiste-bilan'
   | 'urgentiste-home'
   | 'hopital-preadmission'
+  | 'regulation-199'
+  | 'hopital-capacite'
+  | 'citizen-data'
+  | 'urgentiste-incident'
 
 // Figures de raisonnement (Section cognitive)
-export type FigureId = 'count-triangles' | 'arrows-rotation' | 'dots-series'
+export type FigureId =
+  | 'count-triangles'
+  | 'arrows-rotation'
+  | 'dots-series'
+  | 'matrix-3x3'
+  | 'gears'
+  | 'folding-cube'
+  | 'number-pyramid'
 
 export interface Option {
   id: string

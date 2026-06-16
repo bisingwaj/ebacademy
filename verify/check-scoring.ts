@@ -113,10 +113,14 @@ function wrong(q: Question): unknown {
 {
   console.log('\n[5] NORMALISATION')
   assert(normalize('Référentiel de Gravité !') === 'referentiel de gravite', 'accents + casse + ponctuation')
-  const short = EXAM.questions.find((q) => q.id === 'q7')!
-  const r = gradeExam(EXAM, { q7: 'Le RÉFÉRENTIEL de gravité.' }, cand, 1000, 2000, [])
-  const p = r.perQuestion.find((x) => x.questionId === 'q7')!
-  assert(p.correct && p.awarded === p.max, 'short accepte la variante accentuée')
+  // On prend dynamiquement la première question « short » et on vérifie qu'une
+  // variante accentuée/en majuscules de son mot-clé est bien acceptée.
+  const short = EXAM.questions.find((q) => q.type === 'short')!
+  const kw = (short.accept || [])[0]
+  const variant = kw.toUpperCase() + ' !!!'
+  const r = gradeExam(EXAM, { [short.id]: variant }, cand, 1000, 2000, [])
+  const p = r.perQuestion.find((x) => x.questionId === short.id)!
+  assert(p.correct && p.awarded === p.max, `short « ${short.id} » accepte la variante « ${variant} »`)
 }
 
 console.log('\n' + (failures === 0 ? '✅ TOUS LES TESTS PASSENT' : `❌ ${failures} ÉCHEC(S)`))

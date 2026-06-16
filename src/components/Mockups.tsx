@@ -304,6 +304,158 @@ function HopitalPreadmission() {
   )
 }
 
+function Regulation199() {
+  const calls = [
+    { l: 'Douleur thoracique · H. 58 ans', tag: 'NOUVEAU', hot: true, y: 17 },
+    { l: 'Chute à domicile · F. 74 ans', tag: 'EN COURS', hot: false, y: 27 },
+    { l: 'Malaise · voie publique', tag: 'EN COURS', hot: false, y: 37 },
+  ]
+  const grav = ['Vitale', 'Urgente', 'Relative']
+  return (
+    <div className="absolute inset-0 text-white" style={{ fontSize: 'clamp(8px,2.4vw,11px)' }}>
+      <div style={box(6, 4, 88, 6)} className="flex items-center justify-between font-semibold">
+        <span className="uppercase tracking-[0.12em]">Régulation</span>
+        <span className="font-mono text-eb-red">199</span>
+      </div>
+      <div style={box(5, 12, 90, 3)} className="text-[0.78em] uppercase tracking-wider text-white/55">
+        File d'appels
+      </div>
+      {calls.map((c) => (
+        <div
+          key={c.l}
+          style={box(5, c.y, 90, 8.5)}
+          className={`flex items-center justify-between rounded-[8px] px-2 ${c.hot ? 'bg-eb-red/85' : 'bg-white/8'}`}
+        >
+          <span className="text-[0.92em]">{c.l}</span>
+          <span className="text-[0.7em] uppercase tracking-wide text-white/80">{c.tag}</span>
+        </div>
+      ))}
+      <div style={box(5, 49, 90, 3)} className="text-[0.78em] uppercase tracking-wider text-white/55">
+        Niveau de gravité
+      </div>
+      <div style={box(5, 53, 90, 10)} className="flex items-center gap-1.5">
+        {grav.map((g, i) => (
+          <div
+            key={g}
+            className={`flex flex-1 items-center justify-center rounded-[6px] py-1.5 text-[0.9em] font-medium ${
+              i === 0 ? 'bg-eb-red text-white' : 'bg-white/8 text-white/55'
+            }`}
+          >
+            {g}
+          </div>
+        ))}
+      </div>
+      <div style={box(5, 66, 90, 11)} className="flex items-center justify-between rounded-[8px] bg-white/6 px-3">
+        <span className="text-white/55">Secouriste le + proche</span>
+        <span className="font-mono">2,1 km · 4 min</span>
+      </div>
+      <div style={box(5, 82, 90, 12)} className="flex items-center justify-center gap-1.5 rounded-[8px] bg-eb-ok font-semibold text-white">
+        Dispatcher <Icon name="navigation" size={14} />
+      </div>
+    </div>
+  )
+}
+
+function HopitalCapacite() {
+  const rows = [
+    { l: 'Réanimation', v: '1 lit', danger: false, y: 15 },
+    { l: 'Urgences', v: 'Saturé', danger: true, y: 28 },
+    { l: 'Bloc opératoire', v: 'Disponible', danger: false, y: 41 },
+    { l: 'Obstétrique', v: '2 lits', danger: false, y: 54 },
+  ]
+  return (
+    <div className="absolute inset-0 text-white" style={{ fontSize: 'clamp(8px,2.4vw,11px)' }}>
+      <div style={box(5, 4, 90, 7)} className="flex items-center gap-1.5 font-semibold">
+        <Icon name="hospital" size={14} className="text-eb-red" /> Capacité du service
+      </div>
+      {rows.map((r) => (
+        <div
+          key={r.l}
+          style={box(5, r.y, 90, 11)}
+          className="flex items-center justify-between rounded-[8px] bg-white/6 px-3"
+        >
+          <span className="text-[1em] text-white/85">{r.l}</span>
+          <span
+            className={`rounded-full px-2 py-0.5 text-[0.85em] font-medium ${
+              r.danger ? 'bg-eb-red text-white' : 'bg-eb-ok text-white'
+            }`}
+          >
+            {r.v}
+          </span>
+        </div>
+      ))}
+      <div style={box(5, 80, 90, 12)} className="flex items-center justify-between rounded-[10px] bg-white/8 px-3">
+        <span className="text-white/55">Statut accueil</span>
+        <span className="font-medium text-eb-ok">Préadmissions ouvertes</span>
+      </div>
+    </div>
+  )
+}
+
+function CitizenData() {
+  const rows = [
+    { l: 'Antécédents', v: 'Diabète · HTA', y: 24 },
+    { l: 'Allergies', v: 'Pénicilline', y: 39 },
+    { l: 'Traitements', v: 'Metformine', y: 54 },
+    { l: 'Personne à prévenir', v: '+243 …', y: 69 },
+  ]
+  return (
+    <div className="absolute inset-0" style={{ fontSize: 'clamp(8px,2.4vw,11px)' }}>
+      <div style={box(6, 4, 88, 6)} className="flex items-center gap-1.5 font-semibold text-navy">
+        <Icon name="arrow-left" size={13} className="text-eb-red" /> Données médicales
+      </div>
+      <div style={box(6, 12, 88, 8)} className="text-gray-60">
+        Renseignées à l'avance, transmises automatiquement avec l'alerte.
+      </div>
+      {rows.map((r) => (
+        <div
+          key={r.l}
+          style={box(6, r.y, 88, 11)}
+          className="flex items-center justify-between rounded-[10px] border border-eb-line bg-white px-3 text-navy"
+        >
+          <span className="text-[0.95em] text-gray-60">{r.l}</span>
+          <span className="text-[1em] font-medium">{r.v}</span>
+        </div>
+      ))}
+      <div style={box(6, 85, 88, 10)} className="flex items-center justify-center gap-1.5 rounded-[10px] bg-navy font-semibold text-white">
+        Enregistrer <Icon name="check" size={14} />
+      </div>
+    </div>
+  )
+}
+
+function UrgIncident() {
+  const opts = [
+    { ic: 'navigation', l: 'Panne véhicule', x: 5, y: 26 },
+    { ic: 'warning', l: 'Panne matériel', x: 51, y: 26 },
+    { ic: 'map', l: 'Voie bloquée', x: 5, y: 50 },
+    { ic: 'user', l: 'Renfort requis', x: 51, y: 50 },
+  ]
+  return (
+    <div className="absolute inset-0 text-white" style={{ fontSize: 'clamp(8px,2.4vw,11px)' }}>
+      <div style={box(5, 4, 90, 7)} className="flex items-center gap-1.5 font-semibold">
+        <Icon name="warning" size={14} className="text-eb-red" /> Signaler un incident
+      </div>
+      <div style={box(5, 13, 90, 9)} className="text-white/60">
+        Sélectionnez la nature de l'incident logistique sans interrompre la mission.
+      </div>
+      {opts.map((o) => (
+        <div
+          key={o.l}
+          style={box(o.x, o.y, 44, 19)}
+          className="flex flex-col items-center justify-center gap-1.5 rounded-[10px] border border-white/10 bg-white/8"
+        >
+          <Icon name={o.ic} size={18} className="text-white" />
+          <span className="text-[0.95em] font-medium">{o.l}</span>
+        </div>
+      ))}
+      <div style={box(5, 80, 90, 12)} className="flex items-center justify-center gap-1.5 rounded-[8px] bg-eb-red font-semibold text-white">
+        Transmettre au 199 <Icon name="arrow-right" size={14} />
+      </div>
+    </div>
+  )
+}
+
 export function MockupScreen({ id }: { id: MockupId }) {
   switch (id) {
     case 'citizen-home':
@@ -318,13 +470,21 @@ export function MockupScreen({ id }: { id: MockupId }) {
       return <UrgHome />
     case 'hopital-preadmission':
       return <HopitalPreadmission />
+    case 'regulation-199':
+      return <Regulation199 />
+    case 'hopital-capacite':
+      return <HopitalCapacite />
+    case 'citizen-data':
+      return <CitizenData />
+    case 'urgentiste-incident':
+      return <UrgIncident />
     default:
       return null
   }
 }
 
 export function isDarkMockup(id: MockupId): boolean {
-  return id !== 'citizen-home' && id !== 'citizen-type'
+  return id !== 'citizen-home' && id !== 'citizen-type' && id !== 'citizen-data'
 }
 
 export function MockupView({ id }: { id: MockupId }) {
